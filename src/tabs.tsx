@@ -13,10 +13,11 @@ import ShoppingCartIcon from "./assets/icons/fi-rs-shopping-cart-check.svg?react
 import BrowserIcon from "./assets/icons/fi-rs-browser.svg?react";
 import BoxIcon from "./assets/icons/fi-rs-box-alt.svg?react";
 
-interface Tab {
+export interface Tab {
   label?: string;
   path: string;
   icon: React.ElementType;
+  isPinned?: boolean;
 }
 
 export const TABS = [
