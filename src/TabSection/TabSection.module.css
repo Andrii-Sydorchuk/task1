@@ -2,4 +2,84 @@
   background-color: #fefefe;
   width: 100%;
   border: 1px solid #aeb6ce33;
+  border-bottom: 0;
+}
+
+.list {
+  display: flex;
+  list-style: none;
+}
+
+.pinnedItem {
+  padding: 16px 20px;
+  position: relative;
+  align-items: center;
+}
+
+.pinnedItem::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 16px;
+  transform: translateY(-50%);
+  border: 1px solid #aeb6ce33;
+}
+
+.listItemLink {
+  padding: 16px 20px;
+  position: relative;
+  align-items: center;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #7f858d;
+  gap: 10px;
+  text-wrap: nowrap;
+  height: 100%;
+}
+
+.listItemLink::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 16px;
+  transform: translateY(-50%);
+  border: 1px solid #aeb6ce33;
+}
+
+.listItemLink:hover {
+  background-color: #f1f5f8;
+  color: #343434;
+}
+
+.listItemLink:hover .icon {
+  color: #343434;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  color: #7f858d;
+}
+
+.activeLink {
+  background-color: #f1f5f8;
+  color: #343434;
+}
+
+.activeLink .icon {
+  color: #343434;
+}
+
+.activeLink::before {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #4690e2;
+  transition: color 0.3s ease-in-out;
 }

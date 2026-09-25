@@ -10,13 +10,7 @@ function App() {
 
       <main className={styles.main}>
         <TabSection />
-
-        {/* content placeholder */}
-        <div className={styles.contentWrapper}>
-          <div className={styles.content}>
-            <Outlet />
-          </div>
-        </div>
+        <Outlet />
       </main>
     </div>
   );
