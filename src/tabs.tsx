@@ -22,8 +22,10 @@ export interface Tab {
 
 export const TABS = [
   {
+    label: "Lagerverwaltung",
     path: "/",
     icon: BoxIcon,
+    isPinned: true,
   },
   {
     label: "Dashboard",

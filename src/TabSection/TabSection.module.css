@@ -3,17 +3,23 @@
   width: 100%;
   border: 1px solid #aeb6ce33;
   border-bottom: 0;
+  position: relative;
+  overflow: visible;
 }
 
 .list {
   display: flex;
   list-style: none;
+  width: 100%;
+  overflow: visible;
+  align-items: stretch;
 }
 
 .listItem {
   position: relative;
   cursor: grab;
   touch-action: none;
+  flex-shrink: 0;
 }
 
 .listItem:active {
@@ -41,11 +47,10 @@
   position: relative;
   align-items: center;
   display: flex;
-  align-items: center;
   text-decoration: none;
   color: #7f858d;
   gap: 10px;
-  text-wrap: nowrap;
+  white-space: nowrap;
   height: 100%;
 }
 
@@ -94,11 +99,47 @@
   transition: color 0.3s ease-in-out;
 }
 
+.tabCloseButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #eb4d4b;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 6px;
+  flex-shrink: 0;
+  transition:
+    transform 0.15s ease-in-out,
+    opacity 0.15s ease-in-out,
+    background-color 0.15s;
+  opacity: 0;
+  z-index: 2;
+}
+
+.listItem:hover .tabCloseButton {
+  opacity: 1;
+}
+
+.tabCloseButton:hover {
+  transform: scale(1.1);
+  background-color: #d63031;
+}
+
+.tabCloseIcon {
+  width: 10px;
+  height: 10px;
+}
+
 .contextMenu {
   position: absolute;
   top: calc(100% + 4px);
   left: 10px;
-  z-index: 100;
+  z-index: 1000;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -148,8 +189,9 @@
 }
 
 .dragOverlayTab {
-  background-color: #7f858d;
+  background-color: #7c8594;
   color: #ffffff;
+  border-radius: 4px;
   padding: 14px 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
   display: flex;
@@ -165,4 +207,141 @@
   display: flex;
   align-items: center;
   color: #ffffff;
+}
+
+.hoverTooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 1px solid #aeb6ce33;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  color: #343434;
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.moreItem {
+  position: relative;
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: stretch;
+  display: flex;
+}
+
+.moreButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  align-self: stretch;
+  background-color: transparent;
+  border: none;
+  color: #7f858d;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.moreButton:hover {
+  background-color: #f1f5f8;
+  color: #343434;
+}
+
+.moreButtonActive {
+  background-color: #4690e2;
+  color: #ffffff;
+}
+
+.moreButtonActive:hover {
+  background-color: #3a7ecb;
+  color: #ffffff;
+}
+
+.moreChevronIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.overflowMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid #aeb6ce33;
+  min-width: 240px;
+  max-height: 380px;
+  overflow-y: auto;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.overflowMenuItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f8;
+}
+
+.overflowMenuItemRow:last-child {
+  border-bottom: none;
+}
+
+.overflowMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  color: #343434;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.overflowMenuItem:hover {
+  background-color: #f8fafc;
+}
+
+.overflowMenuItemActive {
+  color: #4690e2;
+}
+
+.closeTabButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  color: #aeb6ce;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.closeTabButton:hover {
+  color: #7f858d;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

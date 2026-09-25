@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router";
 import {
   DndContext,
   closestCenter,
@@ -13,95 +12,24 @@ import {
 import {
   SortableContext,
   horizontalListSortingStrategy,
-  useSortable,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 import { useTabs } from "../hooks/useTabs";
-import type { Tab } from "../tabs";
+import { useTabOverflow } from "../hooks/useTabOverflow";
+import { SortableTabItem } from "./components/SortableTabItem";
+import { OverflowMenu } from "./components/OverflowMenu";
 import styles from "./TabSection.module.css";
-import PinIcon from "../assets/icons/fi-rs-thumbtack.svg?react";
-
-interface SortableTabItemProps {
-  tab: Tab;
-  contextMenuTabPath: string | null;
-  onContextMenu: (e: React.MouseEvent, path: string) => void;
-  togglePin: (path: string) => void;
-  setContextMenuTabPath: (path: string | null) => void;
-}
-
-function SortableTabItem({
-  tab,
-  contextMenuTabPath,
-  onContextMenu,
-  togglePin,
-  setContextMenuTabPath,
-}: SortableTabItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: tab.path });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.2 : 1,
-  };
-
-  const Icon = tab.icon;
-  const isMenuOpen = contextMenuTabPath === tab.path;
-
-  return (
-    <li
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={styles.listItem}
-      onContextMenu={(e) => onContextMenu(e, tab.path)}
-    >
-      <NavLink
-        to={tab.path}
-        className={({ isActive }) =>
-          `${styles.listItemLink} ${isActive ? styles.activeLink : ""} ${
-            tab.isPinned ? styles.pinnedLink : ""
-          }`
-        }
-      >
-        <Icon className={styles.icon} />
-        {tab.label ? <span>{tab.label}</span> : null}
-      </NavLink>
-
-      {isMenuOpen && (
-        <div className={styles.contextMenu}>
-          <button
-            type="button"
-            className={styles.contextMenuItem}
-            onClick={(e) => {
-              e.stopPropagation();
-              togglePin(tab.path);
-              setContextMenuTabPath(null);
-            }}
-          >
-            <PinIcon className={styles.contextMenuIcon} />
-            <span>{tab.isPinned ? "Tab losen" : "Tab anpinnen"}</span>
-          </button>
-        </div>
-      )}
-    </li>
-  );
-}
 
 function TabSection() {
-  const { tabs, togglePin, reorder } = useTabs();
+  const { tabs, togglePin, reorder, removeTab } = useTabs();
+  const { containerRef, visibleTabs, overflowTabs, handleTabMeasure } =
+    useTabOverflow(tabs);
+
   const [contextMenuTabPath, setContextMenuTabPath] = useState<string | null>(
     null,
   );
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [isOverflowOpen, setIsOverflowOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -112,17 +40,16 @@ function TabSection() {
   );
 
   useEffect(() => {
-    function handleCloseMenu() {
+    function handleCloseMenus() {
       setContextMenuTabPath(null);
+      setIsOverflowOpen(false);
     }
 
-    if (contextMenuTabPath) {
-      window.addEventListener("click", handleCloseMenu);
-    }
+    window.addEventListener("click", handleCloseMenus);
     return () => {
-      window.removeEventListener("click", handleCloseMenu);
+      window.removeEventListener("click", handleCloseMenus);
     };
-  }, [contextMenuTabPath]);
+  }, []);
 
   function handleContextMenu(e: React.MouseEvent, path: string) {
     e.preventDefault();
@@ -144,6 +71,8 @@ function TabSection() {
 
     if (oldIndex === -1 || newIndex === -1) return;
 
+    if (oldIndex === 0 || newIndex === 0) return;
+
     const activeTab = tabs[oldIndex];
     const overTab = tabs[newIndex];
 
@@ -155,9 +84,10 @@ function TabSection() {
   }
 
   const activeTab = tabs.find((t) => t.path === activeId);
+  const firstTab = tabs.find((t) => t.path === "/");
 
   return (
-    <nav className={styles.tabs}>
+    <nav className={styles.tabs} ref={containerRef}>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -165,20 +95,34 @@ function TabSection() {
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={tabs.map((t) => t.path)}
+          items={visibleTabs.map((t) => t.path)}
           strategy={horizontalListSortingStrategy}
         >
           <ul className={styles.list}>
-            {tabs.map((tab) => (
+            {visibleTabs.map((tab) => (
               <SortableTabItem
                 key={tab.path}
                 tab={tab}
                 contextMenuTabPath={contextMenuTabPath}
                 onContextMenu={handleContextMenu}
                 togglePin={togglePin}
+                removeTab={removeTab}
                 setContextMenuTabPath={setContextMenuTabPath}
+                onMeasure={handleTabMeasure}
               />
             ))}
+
+            <OverflowMenu
+              overflowTabs={overflowTabs}
+              firstTab={firstTab}
+              isOpen={isOverflowOpen}
+              onToggleOpen={(e) => {
+                e.stopPropagation();
+                setIsOverflowOpen((prev) => !prev);
+              }}
+              onCloseMenu={() => setIsOverflowOpen(false)}
+              onRemoveTab={removeTab}
+            />
           </ul>
         </SortableContext>
 
